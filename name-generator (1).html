@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff69b4, #9400d3);
+            color: #333;
+            min-height: 100vh;
+            position: relative;
+            font-size: 26px;
+            overflow-x: hidden;
+        }
+
+        /* Flower decorations */
+        body::before,
+        body::after {
+            content: '✿';
+            position: fixed;
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: -1;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        body::before {
+            top: 20px;
+            left: 20px;
+        }
+
+        body::after {
+            bottom: 20px;
+            right: 20px;
+            animation-delay: 2s;
+        }
+
+        .flower {
+            position: fixed;
+            font-size: 30px;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: -1;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, 10px) rotate(5deg); }
+            50% { transform: translate(0, 20px) rotate(0deg); }
+            75% { transform: translate(-10px, 10px) rotate(-5deg); }
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .generator-panel {
+            flex: 2;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .history-panel {
+            flex: 1;
+            background: rgba(45, 45, 45, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        h1 {
+            color: #6a1b9a;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            font-size: 36px;
+            text-align: center;
+        }
+
+        h2 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-align: center;
+        }
+        
+        .category-btn {
+            background-color: #6a1b9a;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            margin: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 24px;
+        }
+        
+        .category-btn:hover {
+            background-color: #4a148c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        #generated-name {
+            font-size: 32px;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(248, 248, 248, 0.9);
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: background-color 0.3s;
+            font-size: 24px;
+        }
+
+        .history-item:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        #generate-btn {
+            background-color: #4a148c;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 28px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        #generate-btn:hover {
+            background-color: #6a1b9a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        #categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .category-btn {
+                width: calc(50% - 16px);
+                margin: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Add floating flowers -->
+    <div class="flower" style="top: 15%; left: 10%;">❀</div>
+    <div class="flower" style="top: 25%; right: 15%;">✿</div>
+    <div class="flower" style="bottom: 30%; left: 20%;">❁</div>
+    <div class="flower" style="bottom: 15%; right: 25%;">✾</div>
+    <div class="flower" style="top: 50%; left: 5%;">❀</div>
+    <div class="flower" style="top: 40%; right: 8%;">✿</div>
+
+    <div class="container">
+        <div class="generator-panel">
+            <h1>Name Generator</h1>
+            <div id="categories">
+                <button class="category-btn" onclick="setCategory('fantasy')">Fantasy</button>
+                <button class="category-btn" onclick="setCategory('sci-fi')">Sci-Fi</button>
+                <button class="category-btn" onclick="setCategory('medieval')">Medieval</button>
+                <button class="category-btn" onclick="setCategory('modern')">Modern</button>
+            </div>
+            <div id="generated-name">Click Generate to create a name</div>
+            <button id="generate-btn" onclick="generateName()">Generate Name</button>
+        </div>
+        
+        <div class="history-panel">
+            <h2>History</h2>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentCategory = 'fantasy';
+        const nameBank = {
+            fantasy: ['Aradon', 'Thaelar', 'Lysandra', 'Eldrin', 'Celestia', 'Zephyr'],
+            'sci-fi': ['Zex-427', 'Nova', 'Quantum', 'Nexus', 'Cypher', 'Astro'],
+            medieval: ['Aldrich', 'Galahad', 'Eleanor', 'Wilhelm', 'Beatrice', 'Roland'],
+            modern: ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Riley', 'Casey']
+        };
+        
+        function setCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.style.backgroundColor = btn.innerText.toLowerCase() === category ? '#4a148c' : '#6a1b9a';
+            });
+        }
+        
+        function generateName() {
+            const names = nameBank[currentCategory];
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            document.getElementById('generated-name').textContent = randomName;
+            addToHistory(randomName, currentCategory);
+        }
+        
+        function addToHistory(name, category) {
+            const historyList = document.getElementById('history-list');
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = `${name} (${category})`;
+            historyList.insertBefore(historyItem, historyList.firstChild);
+            
+            if (historyList.children.length > 10) {
+                historyList.removeChild(historyList.lastChild);
+            }
+        }
+
+        // Add random floating animations to flowers
+        document.querySelectorAll('.flower').forEach(flower => {
+            flower.style.animationDelay = `${Math.random() * 5}s`;
+        });
+    </script>
+</body>
+</html>
